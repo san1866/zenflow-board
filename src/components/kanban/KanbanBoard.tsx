@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   DndContext,
   DragEndEvent,
@@ -9,17 +10,27 @@ import {
   closestCorners,
 } from '@dnd-kit/core';
 import { useKanban } from '@/hooks/useKanban';
+import { useAuth } from '@/hooks/useAuth';
 import { KanbanColumn } from './KanbanColumn';
 import { AddTaskDialog } from './AddTaskDialog';
 import { ChatBot } from './ChatBot';
+import { Header } from './Header';
 import { ColumnId } from '@/types/kanban';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export function KanbanBoard() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const { tasks, addTask, moveTask, deleteTask, getColumnTasks } = useKanban();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogColumn, setDialogColumn] = useState<ColumnId>('todo');
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate('/auth');
+    }
+  }, [isAuthenticated, authLoading, navigate]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -65,6 +76,18 @@ export function KanbanBoard() {
     setDialogOpen(true);
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background effects */}
@@ -74,22 +97,7 @@ export function KanbanBoard() {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
-        >
-          <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="w-6 h-6 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              Kanban Board
-            </h1>
-          </div>
-          <p className="text-muted-foreground text-sm ml-9">
-            Organize, prioritize, and track your work.
-          </p>
-        </motion.div>
+        <Header />
 
         {/* Board */}
         <DndContext
