@@ -21,10 +21,11 @@ function generateResponse(input: string, tasks: Task[]): string {
   const lower = input.toLowerCase();
   const todoTasks = tasks.filter(t => t.columnId === 'todo');
   const inProgressTasks = tasks.filter(t => t.columnId === 'in-progress');
+  const doneTasks = tasks.filter(t => t.columnId === 'done');
   const highPriority = tasks.filter(t => t.priority === 'high');
 
   if (lower.includes('how many') || lower.includes('count') || lower.includes('total')) {
-    return `You have **${tasks.length}** tasks total: **${todoTasks.length}** in To-do and **${inProgressTasks.length}** in Progress.`;
+    return `You have **${tasks.length}** tasks total: **${todoTasks.length}** To-do, **${inProgressTasks.length}** In Progress, **${doneTasks.length}** Done.`;
   }
   if (lower.includes('high priority') || lower.includes('urgent') || lower.includes('important')) {
     if (highPriority.length === 0) return "No high-priority tasks right now. You're on top of things! 🎉";

@@ -33,7 +33,7 @@ export function KanbanBoard() {
     const overId = over.id as string;
 
     // Dropped on a column
-    if (overId === 'todo' || overId === 'in-progress') {
+    if (overId === 'todo' || overId === 'in-progress' || overId === 'done') {
       moveTask(taskId, overId as ColumnId);
       return;
     }
@@ -52,7 +52,7 @@ export function KanbanBoard() {
     const taskId = active.id as string;
     const overId = over.id as string;
 
-    if (overId === 'todo' || overId === 'in-progress') {
+    if (overId === 'todo' || overId === 'in-progress' || overId === 'done') {
       const task = tasks.find(t => t.id === taskId);
       if (task && task.columnId !== overId) {
         moveTask(taskId, overId as ColumnId);
@@ -98,7 +98,7 @@ export function KanbanBoard() {
           onDragEnd={handleDragEnd}
           onDragOver={handleDragOver}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
               <KanbanColumn
                 id="todo"
@@ -109,7 +109,7 @@ export function KanbanBoard() {
                 onAddClick={() => openDialog('todo')}
               />
             </motion.div>
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               <KanbanColumn
                 id="in-progress"
                 title="In Progress"
@@ -117,6 +117,16 @@ export function KanbanBoard() {
                 accentClass="bg-[hsl(199_89%_48%)]"
                 onDelete={deleteTask}
                 onAddClick={() => openDialog('in-progress')}
+              />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
+              <KanbanColumn
+                id="done"
+                title="Done"
+                tasks={getColumnTasks('done')}
+                accentClass="bg-emerald-500"
+                onDelete={deleteTask}
+                onAddClick={() => openDialog('done')}
               />
             </motion.div>
           </div>
