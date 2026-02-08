@@ -1,5 +1,5 @@
 export type Priority = 'high' | 'medium' | 'low';
-export type ColumnId = 'todo' | 'in-progress';
+export type ColumnId = 'todo' | 'in-progress' | 'done';
 
 export interface Task {
   id: string;
